@@ -1,1 +1,1 @@
-# sports-streaming-app
+# video-streaming-app
