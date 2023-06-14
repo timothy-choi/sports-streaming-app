@@ -1,6 +1,21 @@
+const {AWS, s3} = require('./index.js');
 
-
-
-function createBucket() {
-    
+function hasBucket(bucketName) {
+    return s3.bucketExists(bucketName);
 }
+
+function createBucket(bucketName) {
+    let params = {
+        Bucket: bucketName
+    }
+
+    s3.createBucket(params, (err, data) => {
+        if (err) {
+            return 0;
+        }
+    });
+
+    return 1;
+}
+
+module.exports = { hasBucket, createBucket };
