@@ -3,7 +3,7 @@ package API.Auth;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import javax.servlet.http.HttpServletResponse;
 
 import java.util.List;
 
@@ -60,7 +60,8 @@ public class AccountsController {
     @PutMapping(value="/accounts/username/{Username}")
     public ResponseEntity updateUsername(@PathVariable String username) {
         try {
-            accountsService.findByUsername(username);
+            HttpServletResponse response = new HttpServletResponse();
+            accountsService.updateUsername(username, response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
         }
@@ -80,7 +81,8 @@ public class AccountsController {
     @PostMapping(value="/accounts/login")
     public ResponseEntity login(@RequestBody String username, @RequestBody String password) {
         try {
-            accountsService.login(username, password);
+            HttpServletResponse response = new HttpServletResponse();
+            accountsService.login(username, password, response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Login Failed");
         }
@@ -90,7 +92,8 @@ public class AccountsController {
     @PostMapping(value="/accounts/logout")
     public ResponseEntity logout() {
         try {
-            accountsService.logout();
+            HttpServletResponse response = new HttpServletResponse();
+            accountsService.logout(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Logout Failed");
         }

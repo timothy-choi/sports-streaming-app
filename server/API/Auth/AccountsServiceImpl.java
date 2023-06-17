@@ -4,6 +4,7 @@ package API.Auth;
 import Java.API.Auth.AccountsService;
 import Java.API.Auth.AccountsRepository;
 import Java.API.Auth.Accounts;
+import javax.servlet.http.HttpServletResponse;
 
 public class AccountsServiceImpl implements AccountsService {
     @Autowired
@@ -25,16 +26,29 @@ public class AccountsServiceImpl implements AccountsService {
     }
 
     @Override
-    public updateUsername(String username) {
+    public updateUsername(String username, String newUser, HttpServletResponse response) {
         Accounts account = accountsRepository.findByUsername(username);
-        account.changeUsername(username);
+        if (account == null) {
+            throw new Exception("Username not found");
+        }
+
+        Account newAccount = accountsRepository.findByUsername(newUser);
+        if (newAccount != null) {
+            throw new Exception("Username already exists");
+        }
+        account.changeUsername(newUser);
         accountsRepository.save(account);
         //add call to change cookie
+        Cookie newCookie = new Cookie("username", username);
+        response.addCookie(newCookie);
     }
 
     @Override
     public updatePassword(String password) {
         Accounts account = accountsRepository.findByUsername(username);
+        if (account == null) {
+            throw new Exception("Username not found");
+        }
         account.changePassword(password);
         accountsRepository.save(account);
     }
@@ -42,25 +56,29 @@ public class AccountsServiceImpl implements AccountsService {
     @Override
     public void deleteAccountByID(Long accountId) {
         Accounts account = accountsRepository.findByAccountId(accountId);
+        if (account == null) {
+            throw new Exception("Account not found");
+        }
         accountsRepository.delete(account);
     }
 
     @Override
-    public void login(String username, String password) {
+    public void login(String username, String password, HttpServletResponse response) {
         Accounts account = accountsRepository.findByUsername(username);
         if (account == null) {
             throw new Exception("Username not found");
         }
-        String hashedPassword = account.getPassword(); //encode password
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String hashedPassword = passwordEncoder.encode(account.getPassword()); //encode password
         if (!BCrypt.checkpw(password, hashedPassword)) {
             throw new Exception("Wrong password");
         }
-        //add call to set cookie
+        response.addCookie(new Cookie("username", username));
     }
 
     @Override
-    public void logout() {
-        //add call to delete cookie
+    public void logout(HttpServletResponse response) {
+        response.addCookie(new Cookie("username", null).setMaxAge(0));
         return;
     }
 
@@ -70,8 +88,9 @@ public class AccountsServiceImpl implements AccountsService {
         if (account != null) {
             throw new Exception("Username already exists");
         }
-        password = null; //encode password
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         Accounts newAcct = new Accounts(name, age, email, username, password);
+        newAcct.setPassword(passwordEncoder.encode(newAcct.getPassword()));
         accountsRepository.save(newAcct);
     }
 }
