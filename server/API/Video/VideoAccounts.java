@@ -5,11 +5,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.org.list;
 
+@Embeddable
 public class Video {
     private Long videoId;
     private String title;
     private String description;
     private String username;
+    private String bucket;
+    private String key;
+    private String category;
 
     public Long getVideoId() {
         return this.videoId;
@@ -26,35 +30,20 @@ public class Video {
     public String getUsername() {
         return this.username;
     }
+
+    public String getBucket() {
+        return this.bucket;
+    }
+
+    public String getKey() {
+        return this.key;
+    }
+
+    public String getCategory() {
+        return this.category;
+    }
 }
 
-public class Playlists {
-    private Long playlistId;
-    private String title;
-    private String description;
-    private String username;
-    List<Video> videos;
-
-    public Long getPlaylistId() {
-        return this.playlistId;
-    }
-
-    public String getTitle() {
-        return this.title;
-    }
-
-    public String getDescription() {
-        return this.description;
-    }
-    
-    public String getUsername() {
-        return this.username;
-    }
-    
-    public List<Video> getVideos() {
-        return this.videos;
-    }
-}
 
 @Document(collection = "videoAccounts")
 public class VideoAccounts {
@@ -62,7 +51,8 @@ public class VideoAccounts {
     private @GeneratedValue Long videoAccountId;
     private String username;
     private String email;
-    List<Playlists> playlists;
+    @Embedded
+    List<Video> Videos;
 
     public Long getVideoAccountId() {
         return this.videoAccountId;
@@ -76,8 +66,8 @@ public class VideoAccounts {
         return this.email;
     }
 
-    public List<Playlists> getPlaylists() {
-        return this.playlists;
+    public List<Playlists> getVideos() {
+        return this.Videos;
     }
 
     public void changeUsername(String username) {

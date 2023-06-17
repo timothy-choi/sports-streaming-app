@@ -1,7 +1,5 @@
-const AWS = require('aws-sdk');
+const {AWS, s3} = require('./index.js');
 const fs = require('fs');
-
-let s3 = AWS.S3({});
 
 function uploadVideo(videoname, videodir, bucketName) {
     var params = {
@@ -18,3 +16,5 @@ function uploadVideo(videoname, videodir, bucketName) {
 
     return 1;
 }
+
+module.exports = { uploadVideo };

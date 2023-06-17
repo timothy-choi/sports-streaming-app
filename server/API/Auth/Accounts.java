@@ -19,9 +19,12 @@ public class Accounts {
 
     Accounts() {}
 
-    Accounts(String username, String password) {
+    Accounts(String name, int age, String email, String username, String password) {
         this.username = username;
         this.password = password;
+        this.name = name;
+        this.age = age;
+        this.email = email;
     }
 
     public Long getAccountId() {
