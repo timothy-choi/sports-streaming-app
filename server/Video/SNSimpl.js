@@ -35,7 +35,7 @@ const createNewTopic = function (TopicName) {
 const configToTriggerLambda = function (TopicArn, QueueArn, bucketName) {
     var bucketParams = {
         Bucket: bucketName,
-        NotificationConfiguration: [
+        TopicConfiguration: [
             {
                 TopicArn: TopicArn,
                 Events: [

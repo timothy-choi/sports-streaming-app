@@ -2,6 +2,25 @@ const { AWS, sns} = require('./index.js');
 
 const sqs = new AWS.SQS({apiVersion: '2012-11-05'});
 
+
+const queueExists = function (QueueName) {
+    sqs.listQueues({QueueName: QueueName}, (err, data) => {
+        if (err) {
+            throw new Error(err);
+        } else {
+            for (var i = 0; i < data.QueueUrls.length; i++) {
+                if (data.QueueUrls[i].includes(QueueName)) {
+                    return 1;
+                }
+            }
+            return 0;
+        }
+    });
+
+    return 0;
+};
+
+
 const createNewQueue = function (QueueName) {
     var params = {
         QueueName: QueueName,
@@ -97,4 +116,4 @@ const subscribeToQueue = function (TopicArn, QueueArn, QueueUrl) {
     });
 };
 
-module.exports = { createNewQueue, getQueueUrl, deleteQueue, subscribeToQueue };
+module.exports = { createNewQueue, getQueueUrl, deleteQueue, subscribeToQueue, queueExists};

@@ -6,7 +6,13 @@ const Lambda = new AWS.Lambda();
 const invokeLambda = function (QueueArn) {
     var params = {
         FunctionName: 'VideoTranscoderFunction',
-        EventSourceArn: QueueArn
+        EventSourceArn: QueueArn,
+        MaximumRetryAttempts: 3,
+        DestinationConfig: {
+            OnFailure: {
+                Destination: 'VideoFailureTopic'
+            }   
+        }
     };
 
     Lambda.createEventSourceMapping(params, (err, data) => {
