@@ -6,5 +6,7 @@ const config = {
 }
 const s3 = new AWS.S3(config);
 
+const sns = AWS.SNS();
 
-module.exports = { AWS, s3 };
+
+module.exports = { AWS, s3, sns};
