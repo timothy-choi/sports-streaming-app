@@ -12,12 +12,13 @@ const sendVideo = function (req, res) {
     var bucketname = req.body.bucketName + "_in";
     if (!hasBucket(bucketname)) {
         createBucket(bucketname);
-        bucketName = bucketname + "_out";
+        bucketName = req.body.bucketname + "_out";
         createBucket(bucketname);
     }
 
+    bucketname = req.body.bucketName + "_in";
     try {
-        var res = uploadVideo(req.body.videoName, req.body.videoDir, req.body.username + "_in");
+        var res = uploadVideo(req.body.videoName, req.body.videoDir, bucketname);
     } catch (err) {
         return res.send(500).send({"message": "Error processing video"});
     }
@@ -26,7 +27,7 @@ const sendVideo = function (req, res) {
         return res.send(500).send({"message": "Error uploading video"});
     }
 
-    return res.send(200).send({"message": "Video uploaded successfully"});
+    return res.send(200).send({"message": "Video uploaded successfully", "bucketName": req.body.bucketname + "_out", "videoName": req.body.videoName});
 };
 
 app.post('/getVideo', getVideo);
