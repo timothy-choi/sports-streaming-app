@@ -3,14 +3,31 @@ const app = express();
 const {hasBucket, createBucket} = require('./createBucket.js');
 const {uploadVideo } = require('./uploadVideo.js');
 
+const {invokeLambda} = require('./lambda.js');
+const {createNewTopic, configToTriggerLambda} = require('./SNSimpl.js');
+const {createNewQueue, subscribeToQueue } = require('./SQSimpl.js');
+const { invokeLambda } = require('./lambda.js');
+
 const PORT = 3000;
 app.listen(PORT, () => {});
 
 app.post('/sendVideo', sendVideo);
 
+const setUpUpload = function(bucketName) {
+    var topicArn = createNewTopic(bucketName);
+    var queueArn = createNewQueue(bucketName);
+    var queueUrl = queueArn;
+    queueArn = queueArn.split('/').slice(0, -1).join('/');
+    subscribeToQueue(topicArn, queueArn, queueUrl);
+    configToTriggerLambda(topicArn, queueArn, bucketName);
+    invokeLambda(queueArn);
+};
+
 const sendVideo = function (req, res) {
     var bucketname = req.body.bucketName + "_in";
+    var firstTime = false;
     if (!hasBucket(bucketname)) {
+        firstTime = true;
         createBucket(bucketname);
         bucketName = req.body.bucketname + "_out";
         createBucket(bucketname);
@@ -18,6 +35,9 @@ const sendVideo = function (req, res) {
 
     bucketname = req.body.bucketName + "_in";
     try {
+        if (firstTime) {
+            setUpUpload(req.body.bucketName);
+        }
         var res = uploadVideo(req.body.videoName, req.body.videoDir, bucketname);
     } catch (err) {
         return res.send(500).send({"message": "Error processing video"});
