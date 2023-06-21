@@ -2,7 +2,7 @@ const {AWS, s3} = require('./index.js');
 const fs = require('fs');
 const { getSignedUrl } = require('@aws-sdk/cloudfront-signer');
 
-function uploadVideo(videoname, videodir, bucketName) {
+function uploadVideo(videoname, videodir, bucketName, title) {
     var params = {
         Bucket: bucketName,
         Key: videoname,
@@ -16,8 +16,13 @@ function uploadVideo(videoname, videodir, bucketName) {
     });
 
     param.Bucket = 'AllVideos';
+    params.Body = {
+        Videoname: videoname,
+        Title: title,
+        VideoBucket: bucketName
+    };
 
-    s3.upload(params, (err, data) => {
+    s3.putObject(params, (err, data) => {
         if (err) {
             return 0;
         }

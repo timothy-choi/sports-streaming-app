@@ -38,7 +38,7 @@ const sendVideo = function (req, res) {
         if (firstTime) {
             setUpUpload(req.body.bucketName);
         }
-        var res = uploadVideo(req.body.videoName, req.body.videoDir, bucketname);
+        var res = uploadVideo(req.body.videoName, req.body.videoDir, bucketname, req.body.title);
     } catch (err) {
         return res.send(500).send({"message": "Error processing video"});
     }
