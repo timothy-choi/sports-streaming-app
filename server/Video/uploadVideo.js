@@ -15,6 +15,14 @@ function uploadVideo(videoname, videodir, bucketName) {
         }
     });
 
+    param.Bucket = 'AllVideos';
+
+    s3.upload(params, (err, data) => {
+        if (err) {
+            return 0;
+        }
+    });
+
     return 1;
 }
 
@@ -39,4 +47,26 @@ function downloadVideo(videoname, bucketName) {
     return null;
 }
 
-module.exports = { uploadVideo, downloadVideo};
+function deleteVideo(videoname, bucketName) {
+    var params = {
+        Bucket: bucketName,
+        Key: videoname
+    };
+    
+    s3.deleteObject(params, (err, data) => {
+        if (err) {
+            return 0;
+        }
+    });
+
+    params.Bucket = 'AllVideos';
+    s3.deleteObject(params, (err, data) => {
+        if (err) {
+            return 0;
+        }
+    });
+
+    return 1;
+};
+
+module.exports = { uploadVideo, downloadVideo, deleteVideo};

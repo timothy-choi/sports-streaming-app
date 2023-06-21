@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const {hasBucket, createBucket} = require('./createBucket.js');
-const {uploadVideo } = require('./uploadVideo.js');
+const {uploadVideo, downloadVideo, deleteVideo } = require('./uploadVideo.js');
 
 const {invokeLambda} = require('./lambda.js');
 const {createNewTopic, configToTriggerLambda} = require('./SNSimpl.js');
@@ -60,3 +60,14 @@ const getVideo = function (req, res) {
 
     return res.send(200).send({"message": "Video downloaded successfully", "url": url});
 };
+
+const deleteVideoObj = function (req, res) {
+    var res = deleteVideo(req.body.videoName, req.body.username + "_out");
+    if (!res) {
+        return res.send(500).send({"message": "Error deleting video"});
+    }
+
+    return res.send(200).send({"message": "Video deleted successfully"});
+};
+
+app.delete('/deleteVideo', deleteVideoObj);
