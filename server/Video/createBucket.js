@@ -1,4 +1,5 @@
 const {AWS, s3} = require('./index.js');
+const { deleteVideo } = require('./uploadVideo.js');
 
 function hasBucket(bucketName) {
     return s3.bucketExists(bucketName);
@@ -23,9 +24,22 @@ function deleteBucket(bucketName) {
         Bucket: bucketName
     }
 
+    s3.listObjects(params, (err, data) => {
+        if (err) {
+            throw new Error(err);
+        }
+
+        let objects = data.Contents;
+        if (objects.length > 0) {
+            objects.forEach((object) => {
+                deleteVideo(object.Key, bucketName);
+            });
+        }
+    });
+
     s3.deleteBucket(params, (err, data) => {
         if (err) {
-            return 0;
+            throw new Error(err);
         }
     });
 
