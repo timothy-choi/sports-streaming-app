@@ -18,4 +18,18 @@ function createBucket(bucketName) {
     return 1;
 }
 
-module.exports = { hasBucket, createBucket };
+function deleteBucket(bucketName) {
+    let params = {
+        Bucket: bucketName
+    }
+
+    s3.deleteBucket(params, (err, data) => {
+        if (err) {
+            return 0;
+        }
+    });
+
+    return 1;
+};
+
+module.exports = { hasBucket, createBucket, deleteBucket};

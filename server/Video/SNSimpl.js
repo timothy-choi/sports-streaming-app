@@ -31,6 +31,34 @@ const createNewTopic = function (TopicName) {
     return null;
 };
 
+const deleteTopic = function (TopicArn) {
+    sns.deleteTopic({TopicArn: TopicArn}, (err, data) => {
+        if (err) {
+            throw new Error(err);
+        } else {
+            return 1;
+        }
+    });
+
+    return 0;
+};
+
+const getTopicARN = function (TopicName) {
+    sns.listTopics()
+    .then((data) => {
+        for (var i = 0; i < data.Topics.length; i++) {
+            if (data.Topics[i].TopicArn.includes(TopicName)) {
+                return data.Topics[i].TopicArn;
+            }
+        }
+        return null;
+    })
+    .catch((err) => {
+        throw new Error(err);
+    });
+
+    return null;
+};
 
 const configToTriggerLambda = function (TopicArn, QueueArn, bucketName) {
     var bucketParams = {
@@ -61,4 +89,4 @@ const configToTriggerLambda = function (TopicArn, QueueArn, bucketName) {
 };
 
 
-module.exports = { topicExists, createNewTopic, configToTriggerLambda };
+module.exports = { topicExists, createNewTopic, configToTriggerLambda, deleteTopic, getTopicARN};

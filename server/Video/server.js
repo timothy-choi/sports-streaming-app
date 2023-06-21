@@ -1,11 +1,11 @@
 const express = require('express');
 const app = express();
-const {hasBucket, createBucket} = require('./createBucket.js');
+const {hasBucket, createBucket, deleteBucket} = require('./createBucket.js');
 const {uploadVideo, downloadVideo, deleteVideo } = require('./uploadVideo.js');
 
 const {invokeLambda} = require('./lambda.js');
-const {createNewTopic, configToTriggerLambda} = require('./SNSimpl.js');
-const {createNewQueue, subscribeToQueue } = require('./SQSimpl.js');
+const {createNewTopic, configToTriggerLambda, deleteTopic, getTopicARN} = require('./SNSimpl.js');
+const {createNewQueue, subscribeToQueue, deleteQueue, getQueueUrl} = require('./SQSimpl.js');
 const { invokeLambda } = require('./lambda.js');
 
 const PORT = 3000;
@@ -71,3 +71,20 @@ const deleteVideoObj = function (req, res) {
 };
 
 app.delete('/deleteVideo', deleteVideoObj);
+
+const deleteAcct = function (req, res) {
+    try {
+        var queueUrl = getQueueUrl(req.body.bucketName);
+        var topicARN = getTopicARN(req.body.bucketName);
+        deleteTopic(topicARN);
+        deleteQueue(queueUrl);
+        deleteBucket(req.body.bucketName + "_in");
+        deleteBucket(req.body.bucketName + "_out");
+    } catch (err) {
+        return res.send(500).send({"message": "Error deleting account"});
+    }
+
+    return res.send(200).send({"message": "Account deleted successfully"});
+};
+
+app.delete('/deleteAcct', deleteAcct);

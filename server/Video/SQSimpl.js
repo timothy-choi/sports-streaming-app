@@ -41,9 +41,9 @@ const createNewQueue = function (QueueName) {
     return null;
 };
 
-const getQueueUrl = function () {
+const getQueueUrl = function (QueueName) {
     var params = {
-        QueueName: 'VideoQueue'
+        QueueName: QueueName
     };
 
     sqs.getQueueUrl(params, (err, data) => {
@@ -57,9 +57,9 @@ const getQueueUrl = function () {
     return null;
 }
 
-const deleteQueue = function () {
+const deleteQueue = function (QueueName) {
     var params = {
-        QueueUrl: getQueueUrl()
+        QueueUrl: getQueueUrl(QueueName)
     };
 
     sqs.deleteQueue(params, (err, data) => {
