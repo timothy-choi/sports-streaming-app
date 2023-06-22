@@ -7,6 +7,9 @@ const {invokeLambda} = require('./lambda.js');
 const {createNewTopic, configToTriggerLambda, deleteTopic, getTopicARN} = require('./SNSimpl.js');
 const {createNewQueue, subscribeToQueue, deleteQueue, getQueueUrl} = require('./SQSimpl.js');
 const { invokeLambda } = require('./lambda.js');
+const redis = require('redis');
+const client = redis.createClient();
+const flat = require('flat');
 
 const PORT = 3000;
 app.listen(PORT, () => {});
@@ -38,7 +41,7 @@ const sendVideo = function (req, res) {
         if (firstTime) {
             setUpUpload(req.body.bucketName);
         }
-        var res = uploadVideo(req.body.videoName, req.body.videoDir, bucketname, req.body.title);
+        var res = uploadVideo(req.body.videoName, req.body.videoDir, bucketname, req.body.title, req.body.category);
     } catch (err) {
         return res.send(500).send({"message": "Error processing video"});
     }
@@ -47,7 +50,7 @@ const sendVideo = function (req, res) {
         return res.send(500).send({"message": "Error uploading video"});
     }
 
-    return res.send(200).send({"message": "Video uploaded successfully", "bucketName": req.body.bucketname + "_out", "videoName": req.body.videoName});
+    return res.send(200).send({"message": "Video uploaded successfully", "bucketName": req.body.bucketname + "_out", "videoName": req.body.videoName, "title": req.body.title});
 };
 
 app.post('/getVideo', getVideo);
@@ -60,6 +63,46 @@ const getVideo = function (req, res) {
 
     return res.send(200).send({"message": "Video downloaded successfully", "url": url});
 };
+
+app.get('/getUsersVideos', getUsersVideos);
+
+const getUsersVideos = function (req, res) {
+    try {
+        client.get(req.body.username, (err, data) => {
+            if (err) {
+                throw new Error(err);
+            }
+            if (data) {
+                return res.send(200).send({"message": "Videos downloaded successfully", "videos": JSON.parse(unflatten(data))});
+            }
+            else {
+                var usersVideos = [];
+                for (let i = 0; i < req.body.videos.length; i++) {
+                    axios({
+                        method: 'get',
+                        url: '/getVideo',
+                        data: {
+                            "videoName": req.body.videos[i].videoname,
+                            "title": req.body.videos[i].title,
+                            "bucketName": req.body.bucketname
+                        }
+                    })
+                    .then((response) => {
+                        usersVideos.push(response.data);
+                    })
+                    .catch((error) => {
+                        return res.send(500).send({"message": "Error getting video"});
+                    });
+                }
+                client.setex(req.body.username, 604800, JSON.stringify(flatten(usersVideos)));
+            }
+        });
+    }
+    catch (err) {
+        return res.send(500).send({"message": "Error getting videos"});
+    }
+    return res.send(200).send({"message": "Videos downloaded successfully", "videos": usersVideos});
+}
 
 const deleteVideoObj = function (req, res) {
     var res = deleteVideo(req.body.videoName, req.body.username + "_out");
