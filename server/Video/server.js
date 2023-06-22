@@ -61,7 +61,7 @@ const getVideo = function (req, res) {
         return res.send(500).send({"message": "Error downloading video"});
     }
 
-    return res.send(200).send({"message": "Video downloaded successfully", "url": url});
+    return res.send(200).send({"url": url});
 };
 
 app.get('/getUsersVideos', getUsersVideos);
@@ -70,10 +70,10 @@ const getUsersVideos = function (req, res) {
     try {
         client.get(req.body.username, (err, data) => {
             if (err) {
-                throw new Error(err);
+                return res.send(500).send({"message": "Error getting videos"});
             }
             if (data) {
-                return res.send(200).send({"message": "Videos downloaded successfully", "videos": JSON.parse(unflatten(data))});
+                return res.send(200).send({"videos": unflatten(data)});
             }
             else {
                 var usersVideos = [];
@@ -101,7 +101,7 @@ const getUsersVideos = function (req, res) {
     catch (err) {
         return res.send(500).send({"message": "Error getting videos"});
     }
-    return res.send(200).send({"message": "Videos downloaded successfully", "videos": usersVideos});
+    return res.send(200).send({"videos": JSON.stringify(usersVideos)});
 }
 
 const deleteVideoObj = function (req, res) {
