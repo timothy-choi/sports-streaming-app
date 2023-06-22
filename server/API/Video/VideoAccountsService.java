@@ -6,15 +6,15 @@ import API.Video.VideoAccounts;
 public interface VideoAccountsService {
     List<VideoAccounts> findAll();
 
-    VideoAccounts findByVideoAccountId(String videoAccountId);
+    VideoAccounts findByVideoAccountId(Long videoAccountId);
 
     void deleteVideoAccount(Long videoAccountId);
 
-    void addVideo(Video newVideo);
+    void addVideo(Long videoAccountId, Video newVideo);
 
-    Video getVideo(String username, String videoId);
+    Video getVideo(Long videoAccountId, String videoId);
 
-    void deleteVideo(String username, String videoId);
+    void deleteVideo(Long videoAccountId, String videoId);
 
-    List<Video> getVideos(String username);
+    List<Video> getVideos(Long videoAccountId);
 }

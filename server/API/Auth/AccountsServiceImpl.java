@@ -21,7 +21,7 @@ public class AccountsServiceImpl implements AccountsService {
     }
 
     @Override
-    public Accounts findByAccountId(String accountId) {
+    public Accounts findByAccountId(Long accountId) {
         return accountsRepository.findByAccountId(accountId);
     }
 

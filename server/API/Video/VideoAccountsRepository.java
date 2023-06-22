@@ -7,9 +7,9 @@ import java.util.List;
 public interface VideoAccountsRepository extends MongoRepository<VideoAccounts, String> {
     List<VideoAccounts> findAll();
 
-    VideoAccounts findByVideoAccountId(String videoAccountId);
+    VideoAccounts findByVideoAccountId(Long videoAccountId);
 
     void deleteVideoAccounts(Long videoAccountId);
 
-    List<Video> getVideos(String username);
+    List<Video> findVideosByAccountId(Long videoAccountId);
 }

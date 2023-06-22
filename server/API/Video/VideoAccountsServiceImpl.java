@@ -13,32 +13,49 @@ public class VideoAccountsServiceImpl implements VideoAccountsService {
     }
 
     @Override
-    public VideoAccounts findByVideoAccountId(String videoAccountId) {
+    public VideoAccounts findByVideoAccountId(Long videoAccountId) {
         return videoAccountsRepository.findByVideoAccountId(videoAccountId);
     }
 
     @Override
     public void deleteVideoAccount(Long videoAccountId) {
-
+        videoAccountsRepository.deleteVideoAccounts(videoAccountId);
     }
 
     @Override
-    public void addVideo(Video newVideo) {
-
+    public void addVideo(Long videoAccountId, Video newVideo) {
+       VideoAccount user = videoAccountsRepository.findByVideoAccountId(videoAccountId);
+       user.getVideos().add(newVideo);
+       videoAccountsRepository.save(user);
     }
 
     @Override    
-    public Video getVideo(String username, String videoId) {
-
+    public Video getVideo(Long videoAccountId, String videoId) {
+        VideoAccount user = videoAccountsRepository.findByUsername(videoAccountId);
+        List<Video> videos = user.getVideos();
+        for (Video video : videos) {
+            if (video.getVideoId().equals(videoId)) {
+                return video;
+            }
+        }
+        return null;
     }
 
     @Override
-    public void deleteVideo(String username, String videoId) {
-
+    public void deleteVideo(Long videoAccountId, String videoId) {
+        VideoAccount user = videoAccountsRepository.findByUsername(videoAccountId);
+        List<Video> videos = user.getVideos();
+        for (Video video : videos) {
+            if (video.getVideoId().equals(videoId)) {
+                videos.remove(video);
+                break;
+            }
+        }
+        videoAccountsRepository.save(user);
     }
 
     @Override
-    public List<Video> getVideos(String username) {
-
+    public List<Video> getVideos(Long videoAccountId) {
+        return videoAccountsRepository.getVideos(videoAccountId);
     }
 }

@@ -66,7 +66,7 @@ public class VideoAccounts {
         return this.email;
     }
 
-    public List<Playlists> getVideos() {
+    public List<Video> getVideos() {
         return this.Videos;
     }
 

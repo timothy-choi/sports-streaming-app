@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 public interface AccountsService {
     Accounts findByUsername(String username);
 
-    Accounts findByAccountId(String accountId);
+    Accounts findByAccountId(Long accountId);
 
     void deleteAccountByID(Long accountId);
 
