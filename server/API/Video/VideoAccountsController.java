@@ -88,12 +88,76 @@ public class VideoAccountsController {
     }
 
     @GetMapping(value="/videoAccounts/videos/{username}/{videoId}")
-    public 
+    public ResponseEntity getSingleVideo(@PathVariable String username, @PathVariable Long videoId) {
+        try {
+            Video video = getVideo(username, videoId);
+            String url = RestTemplate.getForObject("http://localhost:8080/getVideo", String.class, video.getKey(), video.getUsername());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Video account not found");
+        }
+        Map videoMap = new HashMap();
+        videoMap.put("videoId", video.getVideoId());
+        videoMap.put("title", video.getTitle());
+        videoMap.put("description", video.getDescription());
+        videoMap.put("category", video.getCategory());
+        videoMap.put("url", url);
+        return ResponseEntity.status(HttpStatus.OK).body(videoMap);
+    }
     
-    @PostMapping(value="/videoAccounts/videos/{username}")
-    public
+    @PostMapping(value="/videoAccounts/videos/{videoAccountId}")
+    public ResponseEntity addVideo(@PathVariable Long videoAccountId, @RequestBody String title, @RequestBody String description, @RequestBody String category, @RequestBody String key, @RequestBody String username, @RequestBody String videoDir) {
+        try {
+            Video video = VideoAccountsService.findByAccountId(videoAccountId);
+            if (video == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Video account not found");
+            }
+            
+            Video newVideo = new Video(title, description, username, username + "_out", key, category);
+            addVideo(videoAccountId, newVideo);
+
+            HttpHeader headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            Map<String, String> req = new HashMap<String, String>();
+            map.put("videoDir", videoDir);
+            map.put("bucketName", username);
+            map.put("VideoName", key);
+            map.put("title", title);
+            map.put("category", category);
+
+            HttpEntity<String> reqEntity = new HttpEntity<String>(req, headers);
+
+            ResponseEntity<String> res = RestTemplate.postForEntity("http://localhost:8080/sendVideo", reqEntity, String.class);
+            if (res.getStatusCode() != HttpStatus.OK) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Video account not found");
+            }
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Video account not found");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body("Video added successfully");
+    }
 
     @DeleteMapping(value="/videoAccounts/videos/{username}/{videoId}")
-    public
+    public ResponsiveEntity deleteVideo() {
+        try {
+            Video video = getVideo(username, videoId);
+            HttpHeader headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            Map<String, String> req = new HashMap<String, String>();
+            req.put("videoName", video.getKey());
+            req.put("username", username);
+            HttpEntity<String> reqEntity = new HttpEntity<String>(req, headers);
+            ResponseEntity<String> res = RestTemplate.exchange("http://localhost:8080/deleteVideo", HttpMethod.DELETE, reqEntity, String.class);
+            if (res.getStatusCode() != HttpStatus.OK) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Video account not found");
+            }
+            videoAccountsService.deleteVideo(videoAccountId, videoId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Video account not found");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body("Video deleted successfully");
+    }
 
 }

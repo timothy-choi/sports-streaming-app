@@ -7,13 +7,23 @@ import java.org.list;
 
 @Embeddable
 public class Video {
-    private Long videoId;
+    @Id
+    private @GeneratedValue Long videoId;
     private String title;
     private String description;
     private String username;
     private String bucket;
     private String key;
     private String category;
+
+    Video(String title, String description, String username, String bucket, String key, String category) {
+        this.title = title;
+        this.description = description;
+        this.username = username;
+        this.bucket = bucket;
+        this.key = key;
+        this.category = category;
+    }
 
     public Long getVideoId() {
         return this.videoId;
