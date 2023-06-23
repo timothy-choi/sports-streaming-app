@@ -2,10 +2,15 @@
 package API.Auth;
 
 import org.springframework.web.bind.annotation.RestController;
+
+import API.Auth.Accounts;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.ws.Response;
 
@@ -104,6 +109,20 @@ public class AccountsController {
     public ResponseEntity signup(@RequestBody String name, @RequestBody int age, @RequestBody String email, @RequestBody String username, @RequestBody String password) {
         try {
             accountsService.register(name, age, email, username, password);
+            HttpHeader headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            Map<String, String> req = new HashMap<>();
+            req.put("username", username);
+            req.put("email", email);
+
+            HttpEntity<String> reqEntity = new HttpEntity<String>(req, headers);
+
+            ResponseEntity<String> res = RestTemplate.postForEntity("http://localhost:8080/videoAccounts/register", reqEntity, String.class);
+
+            if (res.getStatusCode() != HttpStatus.OK) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Signup Failed");
+            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Signup Failed");
         }
