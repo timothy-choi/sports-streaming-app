@@ -17,4 +17,6 @@ public interface VideoAccountsService {
     void deleteVideo(Long videoAccountId, String videoId);
 
     List<Video> getVideos(Long videoAccountId);
+
+    void signup(String username, String email);
 }

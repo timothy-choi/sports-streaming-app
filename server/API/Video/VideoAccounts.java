@@ -18,6 +18,7 @@ public class Video {
     private String category;
 
     Video(String title, String description, String username, String bucket, String key, String category) {
+        this.videoId = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
         this.title = title;
         this.description = description;
         this.username = username;
@@ -64,6 +65,12 @@ public class VideoAccounts {
     private String email;
     @Embedded
     List<Video> Videos;
+
+    VideoAccounts(String username, String email) {
+        this.videoAccountId = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
+        this.username = username;
+        this.email = email;
+    }
 
     public Long getVideoAccountId() {
         return this.videoAccountId;

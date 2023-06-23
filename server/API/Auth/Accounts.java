@@ -20,6 +20,7 @@ public class Accounts {
     Accounts() {}
 
     Accounts(String name, int age, String email, String username, String password) {
+        this.accountId = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
         this.username = username;
         this.password = password;
         this.name = name;

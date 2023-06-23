@@ -58,4 +58,10 @@ public class VideoAccountsServiceImpl implements VideoAccountsService {
     public List<Video> getVideos(Long videoAccountId) {
         return videoAccountsRepository.getVideos(videoAccountId);
     }
+
+    @Override
+    public void signup(String username, String email) {
+        VideoAccount newUser = new VideoAccount(username, email);
+        videoAccountsRepository.save(newUser);
+    }
 }

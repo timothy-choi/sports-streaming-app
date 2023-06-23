@@ -160,4 +160,13 @@ public class VideoAccountsController {
         return ResponseEntity.status(HttpStatus.OK).body("Video deleted successfully");
     }
 
+    @PostMapping(value="/videoAccounts/register")
+    public void register(@RequestBody String username, @RequestBody String email) {
+        try {
+            videoAccountsService.signup(username, email);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error in creating Video account");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("Video account created successfully");
+    }
 }
