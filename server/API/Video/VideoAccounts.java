@@ -1,6 +1,7 @@
 package API.Video;
 
 import org.springframework.data.annotation.Id;
+import javax.persistence.GeneratedValue;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.org.list;
@@ -78,9 +79,5 @@ public class VideoAccounts {
 
     public List<Video> getVideos() {
         return this.Videos;
-    }
-
-    public void changeUsername(String username) {
-        this.username = username;
     }
 }

@@ -47,10 +47,6 @@ public class Accounts {
         return this.age;
     }
 
-    public void changeUsername(String username) {
-        this.username = username;
-    }
-
     public void changePassword(String password) {
         this.password = password;
     }
