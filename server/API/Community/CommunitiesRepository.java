@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.org.List;
 
 
-public class CommunitiesRepository extends MongoRepository<Communities, String> {
+public interface CommunitiesRepository extends MongoRepository<Communities, String> {
     List<Communities> findAll();
 
     Communities findByCommunityId(Long communityId);

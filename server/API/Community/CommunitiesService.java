@@ -4,7 +4,7 @@ import API.Community.Communities;
 import API.Community.User;
 import API.Community.VideoPost;
 
-public class CommunitiesService {
+public interface CommunitiesService {
     List<Communities> findAll();
 
     Communities findByCommunityId(Long communityId);
