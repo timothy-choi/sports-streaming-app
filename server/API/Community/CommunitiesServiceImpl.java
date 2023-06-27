@@ -80,4 +80,9 @@ public class CommunitiesServiceImpl implements CommunitiesService {
         }
         communitiesRepository.save(community);
     }
+
+    @Override
+    public Communities findCommunitiesByName(String communityName) {
+        return communitiesRepository.findCommunitiesByName(communityName);
+    }
 }

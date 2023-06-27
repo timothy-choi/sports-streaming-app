@@ -24,4 +24,6 @@ public interface CommunitiesService {
     void deleteUser(Long communityId, Long userId);
 
     void createCommunities(String communityName, String communityDescription, String communityOwner, Int communityRatingReq, Int communityExpirationTime);
+
+    Communities findCommunitiesByName(String communityName);
 }

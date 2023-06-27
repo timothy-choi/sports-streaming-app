@@ -15,5 +15,7 @@ public interface CommunitiesRepository extends MongoRepository<Communities, Stri
 
     List<User> findMembersByCommunityId(Long communityId);
 
+    Communities findCommunitiesByName(String communityName);
+
     List<VideoPost> findVideoPostsByCommunityId(Long communityId);
 }
