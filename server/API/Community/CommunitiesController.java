@@ -72,28 +72,77 @@ public class CommunitiesController {
     } 
 
     @PostMapping(value="/communities/members/{communityId}/{accountId}")
-    public ResponseEntity addCommunityMember(@PathVariable Long communityId, @PathVariable Long accountId) {
+    public ResponseEntity addCommunityMember(@PathVariable Long communityId, @PathVariable Long accountId, @RequestBody String name, @RequestBody String username) {
+        try {
+            Communities comm = communitiesService.findByCommunityId(communityId);
+            if (comm == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Community not found");
+            }
+            communitiesService.addUser(communityId, new User(name, username));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Community not found");
+        }
 
+        return ResponseEntity.status(HttpStatus.OK).body("Member added");
     }
 
     @PostMapping(value="/communities/videos/{communityId}/{videoId}")
     public ResponseEntity addCommunityVideo(@PathVariable Long communityId, @PathVariable Long videoId, @RequestBody String name, @RequestBody String description, @RequestBody String bucket, @RequestBody String key) {
+        try {
+            Communities comm = communitiesService.findByCommunityId(communityId);
+            if (comm == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Community not found");
+            }
+            communitiesService.addVideoPost(communityId, new VideoPost(name, description, bucket, key));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Community not found");
+        }
 
-
+        return ResponseEntity.status(HttpStatus.OK).body("Video added");
     }
 
     @DeleteMapping(value="/communities/members/{communityId}/{userId}")
     public ResponseEntity deleteCommunityMember(@PathVariable Long communityId, @PathVariable Long userId) {
+        try {
+            Communities comm = communitiesService.findByCommunityId(communityId);
+            if (comm == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Community not found");
+            }
+            communitiesService.deleteUser(communityId, userId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Community not found");
+        }
 
+        return ResponseEntity.status(HttpStatus.OK).body("Member deleted");
     }
 
     @DeleteMapping(value="/communities/videos/{communityId}/{videoPostId}")
     public ResponseEntity deleteCommunityVideo(@PathVariable Long communityId, @PathVariable Long videoPostId) {
+        try {
+            Communities comm = communitiesService.findByCommunityId(communityId);
+            if (comm == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Community not found");
+            }
+            communitiesService.deleteVideo(communityId, videoPostId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Community not found");
+        }
 
+        return ResponseEntity.status(HttpStatus.OK).body("Video deleted");
     }
 
     @DeleteMapping(value="/communities/{communityId}")
     public ResponseEntity deleteCommunity(@PathVariable Long communityId) {
+        try {
+            Communities comm = communitiesService.findByCommunityId(communityId);
+            if (comm == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Community not found");
+            }
+            communitiesService.deleteCommunities(communityId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Community not found");
+        }
 
+        return ResponseEntity.status(HttpStatus.OK).body("Community deleted");
     }
 }
