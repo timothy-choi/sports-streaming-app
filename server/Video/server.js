@@ -56,7 +56,7 @@ const sendVideo = function (req, res) {
 app.post('/getVideo', getVideo);
 
 const getVideo = function (req, res) {
-    var url = downloadVideo(req.body.videoName, req.body.bucketname + "_out");
+    var url = downloadVideo(req.params.videoName, req.params.bucketname + "_out");
     if (!url) {
         return res.send(500).send({"message": "Error downloading video"});
     }

@@ -56,7 +56,7 @@ public class VideoAccountsController {
     public ResponseEntity getUserVideos(@PathVariable String username) {
         try {
             VideoAccounts videoAcct = videoAccountsService.findByUsername(username);
-            String urls = RestTemplate.getForObject("http://localhost:8080/getUsersVideos", String.class, username);
+            String urls = RestTemplate.getForObject("http://localhost:8080/getUsersVideos/" + username, String.class);
             Gson gson = new Gson();
             String[] videos = gson.fromJson(urls, String[].class);
             if (videoAcct == null || videos.length == 0) {
@@ -91,7 +91,7 @@ public class VideoAccountsController {
     public ResponseEntity getSingleVideo(@PathVariable String username, @PathVariable Long videoId) {
         try {
             Video video = getVideo(username, videoId);
-            String url = RestTemplate.getForObject("http://localhost:8080/getVideo", String.class, video.getKey(), video.getUsername());
+            String url = RestTemplate.getForObject("http://localhost:8080/getVideo/" + video.getUsername() + "/" + video.getKey(), String.class);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Video account not found");
         }
