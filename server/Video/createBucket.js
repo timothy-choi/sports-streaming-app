@@ -46,4 +46,21 @@ function deleteBucket(bucketName) {
     return 1;
 };
 
+function getAllObjects(bucketName) {
+    let params = {
+        Bucket: bucketName
+    }
+
+    var objects = [];
+
+    s3.listObjects(params, (err, data) => {
+        if (err) {
+            throw new Error(err);
+        }
+        objects = data.Contents;
+    });
+
+    return objects;
+}
+
 module.exports = { hasBucket, createBucket, deleteBucket};
