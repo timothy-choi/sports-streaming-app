@@ -82,7 +82,7 @@ const getUsersVideos = function (req, res) {
                     axios({
                         method: 'get',
                         url: '/getVideo',
-                        data: {
+                        params: {
                             "videoName": allVideos[i].Key,
                             "bucketName": req.params.username
                         }
