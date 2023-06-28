@@ -56,7 +56,7 @@ const sendVideo = function (req, res) {
 app.post('/getVideo', getVideo);
 
 const getVideo = function (req, res) {
-    var url = downloadVideo(req.body.videoName, req.body.username + "_out");
+    var url = downloadVideo(req.body.videoName, req.body.bucketname + "_out");
     if (!url) {
         return res.send(500).send({"message": "Error downloading video"});
     }
@@ -67,6 +67,7 @@ const getVideo = function (req, res) {
 app.get('/getUsersVideos', getUsersVideos);
 
 const getUsersVideos = function (req, res) {
+    var usersVideos = [];
     try {
         client.get(req.body.username, (err, data) => {
             if (err) {
@@ -76,14 +77,12 @@ const getUsersVideos = function (req, res) {
                 return res.send(200).send({"videos": unflatten(data)});
             }
             else {
-                var usersVideos = [];
                 for (let i = 0; i < req.body.videos.length; i++) {
                     axios({
                         method: 'get',
                         url: '/getVideo',
                         data: {
                             "videoName": req.body.videos[i].videoname,
-                            "title": req.body.videos[i].title,
                             "bucketName": req.body.bucketname
                         }
                     })
@@ -131,3 +130,41 @@ const deleteAcct = function (req, res) {
 };
 
 app.delete('/deleteAcct', deleteAcct);
+
+app.get('/communityVideos', getCommunityVideos);
+
+const getCommunityVideos = function (req, res) {
+    var allCommunityVideos = [];
+    try {
+        client.get(req.params.communityName, (err, data) => {
+            if (err) {
+                return res.send(500).send({"message": "Error getting videos"});
+            }
+            if (data) {
+                return res.send(200).send({"videos": unflatten(data)});
+            }
+            else {
+                for (let i = 0; i < req.body.communityVideos.length; i++) {
+                    axios({
+                        method: 'get',
+                        url: '/getVideo',
+                        data: {
+                            "videoName": req.body.communityVideos[i].videoname,
+                            "bucketName": req.body.bucketname
+                        }
+                    })
+                    .then((response) => {
+                        allCommunityVideos.push(response.data);
+                    })
+                    .catch((error) => {
+                        return res.send(500).send({"message": "Error getting video"});
+                    });
+                }
+                client.setex(req.body.communityName, 604800, JSON.stringify(flatten(allCommunityVideos)));
+            }
+        });
+    } catch (err) {
+        return res.send(500).send({"message": "Error getting videos"});
+    }
+    return res.send(200).send({"videos": JSON.stringify(allCommunityVideos)});
+};
