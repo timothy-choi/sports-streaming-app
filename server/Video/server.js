@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const {hasBucket, createBucket, deleteBucket} = require('./createBucket.js');
+const {hasBucket, createBucket, deleteBucket, getAllObjects} = require('./createBucket.js');
 const {uploadVideo, downloadVideo, deleteVideo } = require('./uploadVideo.js');
 
 const {invokeLambda} = require('./lambda.js');
@@ -69,7 +69,7 @@ app.get('/getUsersVideos', getUsersVideos);
 const getUsersVideos = function (req, res) {
     var usersVideos = [];
     try {
-        client.get(req.body.username, (err, data) => {
+        client.get(req.params.username, (err, data) => {
             if (err) {
                 return res.send(500).send({"message": "Error getting videos"});
             }
@@ -77,13 +77,14 @@ const getUsersVideos = function (req, res) {
                 return res.send(200).send({"videos": unflatten(data)});
             }
             else {
-                for (let i = 0; i < req.body.videos.length; i++) {
+                var allVideos = getAllObjects(req.params.username + "_out");
+                for (let i = 0; i < allVideos.length; i++) {
                     axios({
                         method: 'get',
                         url: '/getVideo',
                         data: {
-                            "videoName": req.body.videos[i].videoname,
-                            "bucketName": req.body.bucketname
+                            "videoName": allVideos[i].Key,
+                            "bucketName": req.params.username
                         }
                     })
                     .then((response) => {

@@ -65,13 +65,13 @@ public class VideoAccountsController {
             List<Map> allVideos = new ArrayList<Map>();
             for (let i = 0; i < videoAcct.getVideos().length; ++i) {
                 Map videoMap = new HashMap();
-                videoMap.put("videoId", videoAcct[i].getVideoId());
-                videoMap.put("title", videoAcct[i].getTitle());
-                videoMap.put("description", videoAcct[i].getDescription());
-                videoMap.put("category", videoAcct[i].getCategory());
+                videoMap.put("videoId", videoAcct[i].getVideos().getVideoId());
+                videoMap.put("title", videoAcct[i].getVideos().getTitle());
+                videoMap.put("description", videoAcct[i].getVideos().getDescription());
+                videoMap.put("category", videoAcct[i].getVideos().getCategory());
                 for (let j = 0; j < videos.length; j++) {
                     URL url = new URL(videos[j]);
-                    if (url.getPath().substr(1) == videoAcct[i].getKey()) {
+                    if (url.getPath().substr(1) == videoAcct[i].getVideos().getKey()) {
                         videoMap.put("url", videos[j]);
                         break;
                     }
