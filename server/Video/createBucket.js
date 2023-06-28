@@ -63,4 +63,4 @@ function getAllObjects(bucketName) {
     return objects;
 }
 
-module.exports = { hasBucket, createBucket, deleteBucket};
+module.exports = { hasBucket, createBucket, deleteBucket,  getAllObjects};
