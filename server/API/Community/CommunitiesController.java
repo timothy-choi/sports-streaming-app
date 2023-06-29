@@ -50,10 +50,10 @@ public class CommunitiesController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Community not found");
         }
         List<VideoPost> videos = communitiesService.findVideoPostsByCommunityId(communityId);
-        List<Map> videoMaps = new ArrayList<>();
+        List<Map> videoMaps = new ArrayList<Map>();
         for (VideoPost currVideo : videos) {
             String vidUrl = RestTemplate.getForObject("http://localhost:8080/getVideo/" + currVideo.getVideoId() + "/" + currVideo.getBucket(), String.class);
-            Map<String, String> vidMap = new HashMap<>();
+            Map<String, String> vidMap = new HashMap();
             vidMap.put("videoId", currVideo.getVideoPostId());
             vidMap.put("name", currVideo.getName());
             vidMap.put("description", currVideo.getDescription());
