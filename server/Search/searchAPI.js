@@ -1,13 +1,13 @@
 const express = require('express');
 const app = express();
 
-const {createIndex, addDocument} = require('./init.js');
+const {createIndex, addDocument, deleteDocument, deleteIndex} = require('./init.js');
 
 const PORT = 1100;
 app.listen(PORT, () => {});
 
 
-const postCreateIndex = function(req, res) {
+const postCreateCommunity = function(req, res) {
     try {
         createIndex(req.body.indexname);
     } catch (err) {
@@ -17,7 +17,7 @@ const postCreateIndex = function(req, res) {
 }
 
 
-app.post('/index', postCreateIndex);
+app.post('/community', postCreateCommunity);
 
 
 const addNewVideo = function(req, res) {
@@ -31,3 +31,26 @@ const addNewVideo = function(req, res) {
 
 
 app.post('/video', addNewVideo);
+
+const deleteVideo = function(req, res) {
+    try {
+        deleteDocument(req.body.indexname, req.body.id);
+    } catch (err) {
+        return res.send(500).send({"message": "Error deleting video"});
+    }
+    return res.send(200).send({"message": "Video deleted successfully"});
+};
+
+app.delete('/video', deleteVideo);
+
+
+const deleteCommunity = function(req, res) {
+    try {
+        deleteIndex(req.body.indexname);
+    } catch (err) {
+        return res.send(500).send({"message": "Error deleting index"});
+    }
+    return res.send(200).send({"message": "Index deleted successfully"});
+};
+
+app.delete('/community', deleteCommunity);
