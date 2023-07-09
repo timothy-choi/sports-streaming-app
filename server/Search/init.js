@@ -125,5 +125,36 @@ const deleteIndex = function(indexName) {
     return null;
 };
 
+const searchOperation = function(searchTerm) {
+    var results = [];
+    searchClient.get(searchTerm, function(err, data) {
+        if (err) {
+            throw err;
+        }
+        if (data) {
+            return JSON.parse(unflatten(data));
+        }
+        else {
+            elasticClient.search({
+                index: '_all',
+                body: {
+                    query: {
+                        fuzzy: {
+                            "name": searchTerm
+                        }
+                    }
+                }
+            }).then(function(resp) {
+                results = resp.hits.hits;
+            }).catch(function(err) {
+                throw err;
+            });
 
-module.exports = { createIndex, addDocument, deleteDocument, deleteIndex, getUsers, getCommunities};
+            searchClient.setex(searchTerm, 604800, JSON.stringify(flatten(results)));
+        }});
+
+    return JSON.parse(unflatten(results));
+};
+
+
+module.exports = { createIndex, addDocument, deleteDocument, deleteIndex, getUsers, getCommunities, searchOperation};
