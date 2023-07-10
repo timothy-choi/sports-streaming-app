@@ -53,7 +53,7 @@ public class CommunitiesController {
         List<VideoPost> videos = communitiesService.findVideoPostsByCommunityId(communityId);
         List<Map> videoMaps = new ArrayList<Map>();
         for (VideoPost currVideo : videos) {
-            String vidUrl = RestTemplate.getForObject("http://localhost:8080/getVideo/" + currVideo.getVideoId() + "/" + currVideo.getBucket(), String.class);
+            String vidUrl = restTemplate.getForObject("http://localhost:8080/getVideo/" + currVideo.getVideoId() + "/" + currVideo.getBucket(), String.class);
             Map<String, String> vidMap = new HashMap();
             vidMap.put("videoId", currVideo.getVideoPostId());
             vidMap.put("name", currVideo.getName());
