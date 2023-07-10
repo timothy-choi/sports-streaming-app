@@ -9,7 +9,7 @@ app.listen(PORT, () => {});
 
 const postCreateCommunity = function(req, res) {
     try {
-        createIndex(req.params.indexname);
+        createIndex(req.body.indexname);
     } catch (err) {
         return res.send(500).send({"message": "Error creating index"});
     }
@@ -17,7 +17,7 @@ const postCreateCommunity = function(req, res) {
 }
 
 
-app.post('/community/:communityId', postCreateCommunity);
+app.post('/community', postCreateCommunity);
 
 
 const addNewVideo = function(req, res) {
@@ -46,14 +46,14 @@ app.delete('/video', deleteVideo);
 
 const deleteCommunity = function(req, res) {
     try {
-        deleteIndex(req.params.indexname);
+        deleteIndex(req.body.indexname);
     } catch (err) {
         return res.send(500).send({"message": "Error deleting index"});
     }
     return res.send(200).send({"message": "Index deleted successfully"});
 };
 
-app.delete('/community/:communityId', deleteCommunity);
+app.delete('/community', deleteCommunity);
 
 
 
