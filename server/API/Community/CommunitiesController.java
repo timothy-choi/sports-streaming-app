@@ -10,6 +10,7 @@ public class CommunitiesController {
 
     @Autowired
     private CommunitiesService communitiesService;
+    RestTemplate restTemplate;
 
     @GetMapping(value="/communities")
     public ResponseEntity getAllCommunities() {
@@ -77,6 +78,15 @@ public class CommunitiesController {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Community already exists");
             }
             communitiesService.createCommunity(name, description, owner, ratingRequirement, daysUntilExpiration);
+            JSONObject reqBody = new JSONObject();
+            request.put("indexname", name);
+
+            HttpEntity<String> request = new HttpEntity<String>(reqBody.toString());
+            ResponseEntity<String> res = restTemplate.exchange("http://localhost:8080/index", HttpMethod.POST, request, String.class);
+            if (res.getStatusCode() != HttpStatus.OK) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding community");
+            }
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Community not found");
         }
