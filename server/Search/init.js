@@ -150,7 +150,7 @@ const searchOperation = function(searchTerm) {
                 throw err;
             });
 
-            searchClient.setex(searchTerm, 604800, JSON.stringify(flatten(results)));
+            searchClient.setex(searchTerm, 3600, JSON.stringify(flatten(results)));
         }});
 
     return JSON.parse(unflatten(results));
