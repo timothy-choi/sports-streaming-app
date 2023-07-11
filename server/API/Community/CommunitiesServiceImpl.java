@@ -36,9 +36,16 @@ public class CommunitiesServiceImpl implements CommunitiesService {
     }
 
     @Override
-    public void createCommunities(String communityName, String communityDescription, String communityOwner, Int communityRatingReq, Int communityExpirationTime) {
+    public int createCommunities(String communityName, String communityDescription, String communityOwner, Int communityRatingReq, Int communityExpirationTime) {
+        List<Communities> communities = communitiesRepository.findAll();
+        for (int i = 0; i < communities.length; ++i) {
+            if (communities[i].getCommunityName().equals(communityName)) {
+                return 0;
+            }
+        }
         Communities newCommunity = new Communities(communityName, communityDescription, communityOwner, communityRatingReq, communityExpirationTime);
         communitiesRepository.save(newCommunity);
+        return 1;
     }
 
     @Override

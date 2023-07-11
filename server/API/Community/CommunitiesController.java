@@ -77,7 +77,10 @@ public class CommunitiesController {
             if (comm != null) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Community already exists");
             }
-            communitiesService.createCommunity(name, description, owner, ratingRequirement, daysUntilExpiration);
+            int result = communitiesService.createCommunity(name, description, owner, ratingRequirement, daysUntilExpiration);
+            if (result == 0) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding community");
+            }
             JSONObject reqBody = new JSONObject();
             request.put("indexname", name);
 
