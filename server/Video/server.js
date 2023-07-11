@@ -131,3 +131,55 @@ const deleteAcct = function (req, res) {
 };
 
 app.delete('/deleteAcct', deleteAcct);
+
+const updateVideosCache = function (req, res) {
+    client.exists(req.body.username, (err, data) => {
+        if (err) {
+            return res.send(500).send({"message": "Error updating cache"});
+        }
+        if (!data) {
+            return res.send(200).send({"message": "No Cache"});
+        }
+    });
+
+    if (req.body.inserting) { //add url to end of list
+        var currentList = {};
+        client.get(req.body.username, (err, data) => {
+            if (err) {
+                return res.send(500).send({"message": "Error updating cache"});
+            }
+
+            currentList = JSON.parse(unflatten(data));
+        });
+
+        currentList.push(req.body.url);
+
+        client.set(req.body.username, JSON.stringify(flatten(currentList)), (err, data) => {
+            if (err) {
+                return res.send(500).send({"message": "Error updating cache"});
+            }
+        });
+    }
+    else { //find deleted url and remove it
+        var currentList = {};
+        client.get(req.body.username, (err, data) => {
+            if (err) {
+                return res.send(500).send({"message": "Error updating cache"});
+            }
+
+            currentList = JSON.parse(unflatten(data));
+        });
+
+        currentList.splice(req.body.offset, 1);
+
+        client.set(req.body.username, JSON.stringify(flatten(currentList)), (err, data) => {
+            if (err) {
+                return res.send(500).send({"message": "Error updating cache"});
+            }
+        });
+    }
+
+    return res.send(200).send({"message": "Cache updated successfully"});
+};
+
+app.post('/cache', updateVideosCache);

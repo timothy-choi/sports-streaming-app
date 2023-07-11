@@ -131,6 +131,17 @@ public class VideoAccountsController {
             if (res.getStatusCode() != HttpStatus.OK) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Video account not found");
             }
+            String url = RestTemplate.getForObject("http://localhost:8080/getVideo/" + username + "/" + key, String.class);
+            reqAdd = new HashMap<String, String>();
+            reqAdd.put("url", url);
+            reqAdd.put("username", username);
+            reqAdd.put("inserting", true);
+
+            reqEntity = new HttpEntity<String>(reqAdd, headers);
+            res = RestTemplate.postForEntity("http://localhost:8080/cache", reqEntity, String.class);
+            if (res.getStatusCode() != HttpStatus.OK) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Video account not found");
+            }
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Video account not found");
         }
@@ -139,9 +150,17 @@ public class VideoAccountsController {
     }
 
     @DeleteMapping(value="/videoAccounts/videos/{username}/{videoId}")
-    public ResponsiveEntity deleteVideo() {
+    public ResponsiveEntity deleteVideo(@RequestBody String username, @RequestBody Long videoId, @PathVariable Long videoAccountId) {
         try {
             Video video = getVideo(username, videoId);
+            List<video> videos = getVideos(videoAccountId);
+            int offset = 0;
+            for (int i = 0; i < videos.length; i++) {
+                if (videos[i].getVideoId() == videoId) {
+                    break;
+                }
+                offset++;
+            }
             HttpHeader headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             Map<String, String> req = new HashMap<String, String>();
@@ -149,6 +168,15 @@ public class VideoAccountsController {
             req.put("username", username);
             HttpEntity<String> reqEntity = new HttpEntity<String>(req, headers);
             ResponseEntity<String> res = RestTemplate.exchange("http://localhost:8080/deleteVideo", HttpMethod.DELETE, reqEntity, String.class);
+            if (res.getStatusCode() != HttpStatus.OK) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Video account not found");
+            }
+            Map<String, String> reqRedis = new HashMap<String, String>();
+            reqRedis.put("offset", offset);
+            reqRedis.put("username", username);
+            reqRedis.put("inserting", false);
+            reqEntity = new HttpEntity<String>(reqRedis, headers);
+            res = RestTemplate.exchange("http://localhost:8080/cache", HttpMethod.POST, reqEntity, String.class);
             if (res.getStatusCode() != HttpStatus.OK) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Video account not found");
             }
