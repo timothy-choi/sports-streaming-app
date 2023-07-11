@@ -147,6 +147,15 @@ public class CommunitiesController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Community not found");
             }
             communitiesService.deleteVideo(communityId, videoPostId);
+            JSONObject reqBody = new JSONObject();
+            reqBody.put("indexname", comm.getName());
+            reqBody.put("videoId", videoPostId);
+
+            HttpEntity<String> request = new HttpEntity<String>(reqBody.toString());
+            ResponseEntity<String> res = restTemplate.exchange("http://localhost:8080/video", HttpMethod.DELETE, request, String.class);
+            if (res.getStatusCode() != HttpStatus.OK) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting community");
+            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Community not found");
         }
