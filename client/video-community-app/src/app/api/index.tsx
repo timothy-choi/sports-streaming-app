@@ -4,8 +4,11 @@ export function Login(payload: {
     username: string,
     password: string
 }) {
-    const res = axios.post('/accounts/login', payload)
-    .then((response) => response.data)
+    var res;
+    axios.post('/accounts/login', payload)
+    .then((response) => {
+        res = response.data
+    })
     .catch(function (err) {
         return err;
     });
