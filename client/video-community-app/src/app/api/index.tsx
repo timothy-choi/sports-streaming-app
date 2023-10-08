@@ -23,8 +23,11 @@ export function Register(payload: {
     username: string,
     password: string
 }) {
-    const res = axios.post('/accounts/signup', payload)
-    .then((response) => response.data)
+    var res;
+    axios.post('/accounts/signup', payload)
+    .then((response) => {
+        res = response.data;
+    })
     .catch(function (err) {
         return err;
     });
@@ -33,13 +36,15 @@ export function Register(payload: {
         username: String, password: String
     };
 
-    const res2 = axios.post('/videoAccounts/register', payload2)
-    .then((response) => response.data)
+    axios.post('/videoAccounts/register', payload2)
+    .then((response) => {
+        res = response.data;
+    })
     .catch(function (err) {
         return err;
     });
 
-    return res2;
+    return res;
 }
 
 export function Logout() {
