@@ -43,20 +43,16 @@ export default function LoginPage() {
     }
     else {
         return (
-            <div className="login" onSubmit={onLoginSubmit}>
-                <form>
+            <div className="login">
+                <form className="loginForm" onSubmit={onLoginSubmit}>
                     <TextField 
                         placeholder = ""
                         label = "Email"
-                        value = {}
-                        onChange = {}
                         required = {true}
                     />
                     <TextField 
                         placeholder = ""
                         label = "Password"
-                        value = {}
-                        onChange = {}
                         required = {true}
                     />
                     <div className="submit">
