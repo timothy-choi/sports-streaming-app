@@ -2,6 +2,8 @@ package API.Community;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import API.Community.Communities;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
@@ -68,6 +70,21 @@ public class CommunitiesController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No videos found");
         }
         return ResponseEntity.status(HttpStatus.OK).body(videoMaps);
+    }
+
+    @PatchMapping(value="/communities/videos/{communityName}/{videoId}/{rating}")
+    public ResponseEntity updateVideoRating(@PathVariable String communityName, @PathVariable Long videoId, @PathVariable Int rating) {
+        try {
+            Communities community = communitiesService.findCommunitiesByName(communityName);
+            if (community == null) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Couldn't find community");
+            }
+            communitiesService.updateVideoByRating(community.getCommunityId(), videoId, rating);
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Couldn't update community");
+        }
+        return ResponseEntity.status(HttpStatus.Ok).body("Updated Rating for video " + videoId);
     }
 
     @PostMapping(value="/communities")

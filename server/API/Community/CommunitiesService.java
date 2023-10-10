@@ -26,4 +26,6 @@ public interface CommunitiesService {
     void createCommunities(String communityName, String communityDescription, String communityOwner, Int communityRatingReq, Int communityExpirationTime);
 
     Communities findCommunitiesByName(String communityName);
+
+    void updateVideoByRating(Long communityId, Long videoId, int ratingChange);
 }

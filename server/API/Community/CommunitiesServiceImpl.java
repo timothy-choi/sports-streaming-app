@@ -92,4 +92,19 @@ public class CommunitiesServiceImpl implements CommunitiesService {
     public Communities findCommunitiesByName(String communityName) {
         return communitiesRepository.findCommunitiesByName(communityName);
     }
+
+    @Override
+    public void updateVideoByRating(Long communityId, Long videoId, int ratingChange) {
+        Communities community = communitiesRepository.findByCommunityId(communityId);
+        List<VideoPost> videos = community.getVideos();
+        VideoPost vid = null;
+        for (auto video : videos) {
+            if (video.videoPostId == videoId) {
+                vid = video;
+                break;
+            }
+        }
+        video.changeRating(ratingChange + video.getRating());
+        communitiesRepository.save(community);
+    }
 }
