@@ -104,7 +104,7 @@ public class CommunitiesServiceImpl implements CommunitiesService {
                 break;
             }
         }
-        video.changeRating(ratingChange + video.getRating());
+        vid.changeRating(ratingChange + video.getRating());
         communitiesRepository.save(community);
     }
 }
