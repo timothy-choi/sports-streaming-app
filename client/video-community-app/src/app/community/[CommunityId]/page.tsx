@@ -17,12 +17,17 @@ interface Videos {
 };
 
 export default function CommunityPage({communityParams}) {
+    var user = JSON.parse(localStorage.getItem("userInfo") || '{}');
     const addNewMember = async (accountId, name, username, communityId) => {
         await addCommunityMembers({communityId, accountId, name, username})
         .then((response) => {return response.ok()})
         .catch((err) => {
             throw Error(err);
         });
+    }
+
+    const redirectToVideo = async (videoId) => {
+        location.href = `/videos/${videoId}`;
     }
     const [isLoading, setLoading] = useState(true);
     const [communityData, setCommunityData] = useState({
@@ -70,6 +75,8 @@ export default function CommunityPage({communityParams}) {
         getAllMembers(communityParams.communityId);
         getAllVideos(communityParams.communityId);
 
+        allVideos = allVideos.sort((a, b) => (a.rating < b.rating) ? 1 : (a.rating > b.rating) ? -1 : 0);
+
         setCommunityData((community) => ({
             ...community,
             name: commName,
@@ -89,6 +96,52 @@ export default function CommunityPage({communityParams}) {
         );
     }
     else {
-        return ();
+        return (
+            <div className="community">
+                <p>{communityData.name}</p>
+                <p>Created by {communityData.owner}</p>
+                <p>{communityData.members.length} members</p>
+                <p>{communityData.description}</p>
+
+                <div className = "addMember">
+                    <input type="button" value="Join Community" onClick={() => addNewMember(communityParams.communityId, communityParams.accountId, communityParams.name, user.username)}></input>
+                </div>
+
+                <div className = "seeMembers">
+
+                </div>
+
+                <div className = "videos">
+                    <ul>
+                        {communityData.videos.map((video, index) => (
+                            <button onClick={() => redirectToVideo(video.videoId)}>
+                                <li key={index}>
+                                    {video.videoId}
+                                    {video.name}
+                                    {video.description}
+                                    {video.rating}
+                                </li>
+                            </button>
+                        ))}
+                    </ul>
+                </div>
+
+                <div className = "allExpiringVideos">
+                    <ul>
+                        {communityData.videos.filter((video) => video.rating < communityData.ratingRequirement)
+                        .map((video, index) => (
+                            <button onClick={() => redirectToVideo(video.videoId)}>
+                                <li key={index}>
+                                    {video.videoId}
+                                    {video.name}
+                                    {video.description}
+                                    {video.rating}
+                                </li>
+                            </button>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        );
     }
 };
