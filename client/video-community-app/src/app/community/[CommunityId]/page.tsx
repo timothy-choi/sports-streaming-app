@@ -1,6 +1,40 @@
 import { addCommunityMembers } from "@components/app/api";
 import { useEffect, useState } from "react";
 
+const MembersListButton = ({membersList}) => {
+    const redirectToVideo = async (videoId) => {
+        location.href = `/videos/${videoId}`;
+    }
+    const [showList, setShowList] = useState(false);
+
+    const activateList = () => {
+        setShowList(!showList);
+    }
+
+    return (
+        <div>
+            <button onClick={activateList}>See Members</button>
+            {showList && (
+                <ul>
+                    {membersList.map((object, index) => (
+                        <li key={index}>
+                            {object.name}
+                            {object.username}
+                            {object.videos.map((video, index) => (
+                                <li key={index}>
+                                    <button onClick={() => redirectToVideo(video.videoId)}>
+                                        {video.name}
+                                    </button>
+                                </li>
+                            ))}
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+};
+
 interface User {
     userId: number,
     name: String,
@@ -108,7 +142,7 @@ export default function CommunityPage({communityParams}) {
                 </div>
 
                 <div className = "seeMembers">
-
+                    <MembersListButton membersList={communityData.members} />
                 </div>
 
                 <div className = "videos">
