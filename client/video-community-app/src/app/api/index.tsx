@@ -153,7 +153,6 @@ export function getAllCommunities() {
     
     return res;
 }
-}
 
 export function getCommunityVideos(payload: {
     communityId: Number
