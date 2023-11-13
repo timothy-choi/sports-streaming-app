@@ -144,6 +144,29 @@ export function removeCommunityVideo(payload: {
     return res;
 }
 
+export function getAllCommunities() {
+    const res = axios.get(`/communities`)
+    .then((response) => response.data)
+    .catch(function (err) {
+        return err;
+    });
+    
+    return res;
+}
+}
+
+export function getCommunityVideos(payload: {
+    communityId: Number
+}) {
+    const res = axios.get(`/communities/videos/${payload.communityId}`)
+    .then((response) => response.data)
+    .catch(function (err) {
+        return err;
+    });
+    
+    return res;
+}
+
 export function getVideo(payload: {
     username: String,
     videoId: Number
